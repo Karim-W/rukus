@@ -27,21 +27,31 @@ impl Output {
         execute!(stdout(), cursor::MoveTo(0, 0))
     }
     fn draw_rows(&mut self) {
+        let screen_columns = self.win_size.0;
         let screen_rows = self.win_size.1;
-        for _ in 0..screen_rows - 1 {
-            self.content.push('\r')
+        let mut welcome = format!("----- v0.0.1 -----");
+        if welcome.len() > screen_columns {
+            welcome.truncate(screen_columns)
         }
+        self.content.push_str(&welcome);
+        for _ in 1..screen_rows - 1 {
+            println!("~\r");
+            // self.content.push('~');
+            // self.content.push('\r');
+        }
+        queue!(self.content, terminal::Clear(ClearType::UntilNewLine)).unwrap();
         self.content.push_str("\r\n")
     }
 
     pub fn refresh_screen(&mut self) -> crossterm::Result<()> {
         queue!(
             self.content,
-            terminal::Clear(ClearType::All),
+            cursor::Hide,
+            // terminal::Clear(ClearType::All),
             cursor::MoveTo(0, 0)
         )?;
         self.draw_rows();
-        queue!(self.content, cursor::MoveTo(0, 0))?;
+        queue!(self.content, cursor::MoveTo(0, 0), cursor::Show)?;
         self.content.flush()
     }
 }
