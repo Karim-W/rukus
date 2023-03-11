@@ -21,6 +21,30 @@ impl Editor {
                 kind: _,
                 state: _,
             } => return Ok(false),
+            KeyEvent {
+                code: KeyCode::Char(val @ ('w' | 'a' | 's' | 'd')),
+                modifiers: KeyModifiers::NONE,
+                kind: _,
+                state: _,
+            } => self.output.move_cursor(val),
+            KeyEvent {
+                code: KeyCode::Char(val),
+                modifiers: KeyModifiers::NONE,
+                kind: _,
+                state: _,
+            } => self.output.insert_row(val),
+            KeyEvent {
+                code: KeyCode::Enter,
+                modifiers: KeyModifiers::NONE,
+                kind: _,
+                state: _,
+            } => self.output.handle_create_line(),
+            // KeyEvent {
+            //     code: KeyCode::Char(val),
+            //     modifiers: KeyModifiers::NONE,
+            //     kind: _,
+            //     state: _,
+            // } => println!("Key pressed: {}", val),
             _ => {}
         }
         Ok(true)
