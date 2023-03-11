@@ -31,4 +31,8 @@ impl Editor {
         self.output.refresh_screen()?;
         self.process_keypress()
     }
+
+    pub fn exit(&self) -> crossterm::Result<()> {
+        self.output.clear_screen()
+    }
 }

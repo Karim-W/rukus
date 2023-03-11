@@ -2,6 +2,7 @@ use crossterm::cursor;
 use crossterm::execute;
 use crossterm::terminal::{self, ClearType};
 use std::io::stdout;
+use std::io::Write;
 pub struct Output {
     win_size: (usize, usize),
 }
@@ -14,20 +15,20 @@ impl Output {
         Self { win_size }
     }
 
-    pub fn clear_screen() -> crossterm::Result<()> {
+    pub fn clear_screen(&self) -> crossterm::Result<()> {
         execute!(stdout(), terminal::Clear(ClearType::All))?;
         execute!(stdout(), cursor::MoveTo(0, 0))
     }
     fn draw_rows(&self) {
-        let screen_rows = self.win_size.1; /* add this line */
-        for _ in 0..screen_rows {
-            /* modify */
+        let screen_rows = self.win_size.1;
+        for _ in 0..screen_rows - 1 {
             println!("~\r");
         }
+        stdout().flush().expect("this should flush")
     }
 
     pub fn refresh_screen(&self) -> crossterm::Result<()> {
-        Self::clear_screen()?;
+        Self::clear_screen(self)?;
         self.draw_rows();
         execute!(stdout(), cursor::MoveTo(0, 0))
     }
