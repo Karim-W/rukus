@@ -1,7 +1,6 @@
+use crate::output;
+use crate::reader;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-pub mod output;
-pub mod reader;
-
 pub struct Editor {
     r: reader::Reader,
     output: output::Output,
@@ -14,7 +13,7 @@ impl Editor {
             output: output::Output::new(),
         }
     }
-    pub fn process_keypress(&self) -> crossterm::Result<bool> {
+    pub fn process_keypress(&mut self) -> crossterm::Result<bool> {
         match self.r.read_key()? {
             KeyEvent {
                 code: KeyCode::Char('c'),
@@ -27,12 +26,12 @@ impl Editor {
         Ok(true)
     }
 
-    pub fn run(&self) -> crossterm::Result<bool> {
+    pub fn run(&mut self) -> crossterm::Result<bool> {
         self.output.refresh_screen()?;
         self.process_keypress()
     }
 
-    pub fn exit(&self) -> crossterm::Result<()> {
+    pub fn exit(&mut self) -> crossterm::Result<()> {
         self.output.clear_screen()
     }
 }
